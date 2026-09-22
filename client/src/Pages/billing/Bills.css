@@ -1,0 +1,576 @@
+/* ===== Bills.css ===== */
+
+/* ---------- Layout ---------- */
+.bill-page {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bill-loading {
+    padding: 40px;
+    text-align: center;
+    color: #6b6b68;
+}
+
+/* ---------- Header ---------- */
+.bill-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bill-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111210;
+    margin: 0 0 4px;
+}
+
+.bill-subtitle {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 0;
+}
+
+.bill-create-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #1A9E75;
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+    .bill-create-btn i {
+        font-size: 16px;
+    }
+
+    .bill-create-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+/* ---------- Error banner (shared by page + modal) ---------- */
+.bill-error-banner {
+    background: #FEF0F0;
+    color: #B03030;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* ---------- Stat cards ---------- */
+.bill-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.bill-stat-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.bill-stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .bill-stat-icon i {
+        font-size: 22px;
+    }
+
+    .bill-stat-icon[data-tone="green"] {
+        background: #E1F5EE;
+        color: #1A9E75;
+    }
+
+    .bill-stat-icon[data-tone="amber"] {
+        background: #FEF7E6;
+        color: #875000;
+    }
+
+    .bill-stat-icon[data-tone="red"] {
+        background: #FEF0F0;
+        color: #B03030;
+    }
+
+.bill-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111210;
+    line-height: 1;
+}
+
+.bill-stat-label {
+    font-size: 12.5px;
+    color: #6b6b68;
+    margin-top: 3px;
+}
+
+/* ---------- Toolbar (search + status filters) ---------- */
+.bill-toolbar {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.bill-search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+    .bill-search i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+        color: #a0a09d;
+        pointer-events: none;
+    }
+
+    .bill-search input {
+        width: 100%;
+        padding: 8px 12px 8px 34px;
+        box-sizing: border-box;
+        background: #f7f7f5;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #111210;
+        outline: none;
+        font-family: inherit;
+    }
+
+.bill-filters {
+    display: flex;
+    gap: 6px;
+}
+
+.bill-filter-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #f7f7f5;
+    color: #6b6b68;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+    .bill-filter-btn[data-active="true"] {
+        border: none;
+        background: #1A9E75;
+        color: #fff;
+        font-weight: 600;
+    }
+
+/* ---------- Table ---------- */
+.bill-table-wrap {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .bill-table thead tr {
+        background: #f7f7f5;
+    }
+
+    .bill-table th {
+        padding: 11px 18px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        color: #a0a09d;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        white-space: nowrap;
+    }
+
+    .bill-table td {
+        padding: 14px 18px;
+        font-size: 13px;
+    }
+
+    .bill-table tbody tr {
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+.bill-row-index {
+    color: #a0a09d;
+    font-weight: 500;
+}
+
+.bill-patient-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bill-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #E1F5EE;
+    color: #0F6E52;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.bill-patient-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #111210;
+}
+
+.bill-doctor-cell,
+.bill-date-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b6b68;
+}
+
+    .bill-doctor-cell i,
+    .bill-date-cell i {
+        font-size: 13px;
+        color: #a0a09d;
+    }
+
+.bill-amount-cell {
+    font-weight: 600;
+    color: #111210;
+}
+
+.bill-items-badge {
+    font-size: 12px;
+    font-weight: 500;
+    background: #f0f0ee;
+    color: #6b6b68;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.bill-status-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+    .bill-status-badge[data-status="Paid"] {
+        background: #E1F5EE;
+        color: #0F6E52;
+    }
+
+    .bill-status-badge[data-status="Unpaid"] {
+        background: #FEF7E6;
+        color: #875000;
+    }
+
+    .bill-status-badge[data-status="Overdue"] {
+        background: #FEF0F0;
+        color: #B03030;
+    }
+
+.bill-empty-row {
+    padding: 60px;
+    text-align: center;
+    color: #a0a09d;
+}
+
+    .bill-empty-row i {
+        font-size: 36px;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+.bill-view-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #F0F9F5;
+    border: 1px solid #C5E8D9;
+    border-radius: 7px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #0F6E52;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* ================= Modal ================= */
+
+.bill-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 300;
+}
+
+.bill-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 16px;
+    z-index: 400;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.bill-modal-header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+
+.bill-modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111210;
+}
+
+.bill-modal-close {
+    background: #f7f7f5;
+    border: none;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #6b6b68;
+}
+
+.bill-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.bill-modal-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.bill-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.bill-btn-cancel {
+    flex: 1;
+    padding: 11px 0;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #6b6b68;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.bill-btn-submit {
+    flex: 2;
+    padding: 11px 0;
+    background: #1A9E75;
+    border: none;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+    .bill-btn-submit:disabled,
+    .bill-btn-cancel:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+
+    .bill-btn-submit i {
+        font-size: 16px;
+    }
+
+/* ---------- Form field ---------- */
+.bill-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .bill-field label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #111210;
+    }
+
+    .bill-field .required {
+        color: #E24B4A;
+    }
+
+.bill-field-error {
+    font-size: 11.5px;
+    color: #B03030;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .bill-field-error i {
+        font-size: 13px;
+    }
+
+/* ---------- Inputs ---------- */
+.bill-input {
+    width: 100%;
+    padding: 9px 12px;
+    box-sizing: border-box;
+    background: #f7f7f5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #111210;
+    outline: none;
+    font-family: inherit;
+}
+
+    .bill-input[data-error="true"] {
+        border-color: #E24B4A;
+    }
+
+    .bill-input:disabled {
+        background: #efefec;
+        color: #6b6b68;
+    }
+
+/* ---------- Line items ---------- */
+.bill-items-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bill-items-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111210;
+}
+
+.bill-item-row {
+    display: grid;
+    grid-template-columns: 1fr 70px 100px 32px;
+    gap: 8px;
+    align-items: start;
+}
+
+.bill-item-remove {
+    background: #FEF0F0;
+    border: none;
+    border-radius: 7px;
+    width: 32px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #B03030;
+    cursor: pointer;
+}
+
+    .bill-item-remove:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+.bill-add-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px dashed rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 9px 0;
+    justify-content: center;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #1A9E75;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.bill-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f7f7f5;
+    border-radius: 10px;
+}
+
+.bill-total-label {
+    font-size: 13px;
+    color: #6b6b68;
+}
+
+.bill-total-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111210;
+}

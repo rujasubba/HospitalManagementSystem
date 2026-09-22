@@ -1,0 +1,216 @@
+.record-details-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+}
+
+.record-back-link {
+    background: none;
+    border: none;
+    color: #4a6fa5;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0 0 16px;
+}
+
+    .record-back-link:hover {
+        text-decoration: underline;
+    }
+
+.record-details-loading,
+.record-details-error {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.record-details-error {
+    color: #c0392b;
+    background: #fdecea;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.record-details-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    margin-bottom: 16px;
+}
+
+.record-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+    .record-details-header h1 {
+        font-size: 1.4rem;
+        margin: 0;
+        color: #1f2937;
+    }
+
+.record-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+    margin-bottom: 24px;
+}
+
+.record-details-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.record-details-field-full {
+    grid-column: 1 / -1;
+}
+
+.field-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+}
+
+.field-value {
+    font-size: 1rem;
+    color: #1f2937;
+    white-space: pre-wrap;
+}
+
+.record-section {
+    margin-bottom: 20px;
+}
+
+.record-section-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+    margin-bottom: 6px;
+}
+
+.record-section-value {
+    font-size: 0.95rem;
+    color: #1f2937;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.record-details-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.record-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+    .record-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+.record-btn-edit {
+    background: #1A9E75;
+    color: #fff;
+}
+
+.record-btn-delete {
+    background: #c0392b;
+    color: #fff;
+}
+
+.record-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.record-btn:not(:disabled):hover {
+    opacity: 0.9;
+}
+
+.record-edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 16px;
+}
+
+    .record-edit-field label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #111210;
+    }
+
+.record-edit-input {
+    width: 100%;
+    padding: 9px 12px;
+    box-sizing: border-box;
+    background: #f7f7f5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #111210;
+    outline: none;
+    font-family: inherit;
+}
+
+    .record-edit-input.textarea {
+        resize: vertical;
+        min-height: 80px;
+        line-height: 1.5;
+    }
+.record-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.record-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 360px;
+    width: 90%;
+}
+
+    .record-modal h2 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+        color: #1f2937;
+    }
+
+    .record-modal p {
+        margin: 0 0 20px;
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+.record-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+@media (max-width: 520px) {
+    .record-details-grid {
+        grid-template-columns: 1fr;
+    }
+}

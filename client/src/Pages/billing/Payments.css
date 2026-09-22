@@ -1,0 +1,49 @@
+.payments-toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.payments-search {
+    max-width: 320px;
+}
+
+.payments-status-filter {
+    max-width: 180px;
+}
+
+.payments-add-btn {
+    margin-left: auto;
+}
+
+.payment-tbl th {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Status badge colors, keyed off data-status like Appointments.css does for status/type */
+.badge[data-status="paid"] {
+    background-color: #2fb344;
+    color: #fff;
+}
+
+.badge[data-status="pending"] {
+    background-color: #f1a63f;
+    color: #fff;
+}
+
+.badge[data-status="partial"] {
+    background-color: #4c6fff;
+    color: #fff;
+}

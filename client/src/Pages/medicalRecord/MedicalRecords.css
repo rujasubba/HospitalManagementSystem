@@ -1,0 +1,421 @@
+
+.record-page {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.record-loading {
+    padding: 40px;
+    text-align: center;
+    color: #6b6b68;
+}
+
+.record-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.record-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111210;
+    margin: 0 0 4px;
+}
+
+.record-subtitle {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 0;
+}
+
+.record-create-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #1A9E75;
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+    .record-create-btn i {
+        font-size: 16px;
+    }
+
+.record-error-banner {
+    background: #FEF0F0;
+    color: #B03030;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.record-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.record-stat-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.record-stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .record-stat-icon i {
+        font-size: 22px;
+    }
+
+    .record-stat-icon[data-tone="green"] {
+        background: #E1F5EE;
+        color: #1A9E75;
+    }
+
+    .record-stat-icon[data-tone="amber"] {
+        background: #FEF7E6;
+        color: #875000;
+    }
+
+.record-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111210;
+    line-height: 1;
+}
+
+.record-stat-label {
+    font-size: 12.5px;
+    color: #6b6b68;
+    margin-top: 3px;
+}
+
+.record-toolbar {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.record-search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+    .record-search i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+        color: #a0a09d;
+        pointer-events: none;
+    }
+
+    .record-search input {
+        width: 100%;
+        padding: 8px 12px 8px 34px;
+        box-sizing: border-box;
+        background: #f7f7f5;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #111210;
+        outline: none;
+        font-family: inherit;
+    }
+
+.record-table-wrap {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.record-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .record-table thead tr {
+        background: #f7f7f5;
+    }
+
+    .record-table th {
+        padding: 11px 18px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        color: #a0a09d;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        white-space: nowrap;
+    }
+
+    .record-table td {
+        padding: 14px 18px;
+        font-size: 13px;
+    }
+
+    .record-table tbody tr {
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+.record-row-index {
+    color: #a0a09d;
+    font-weight: 500;
+}
+
+.record-patient-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.record-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #E1F5EE;
+    color: #0F6E52;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.record-patient-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #111210;
+}
+
+.record-doctor-cell,
+.record-date-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b6b68;
+}
+
+    .record-doctor-cell i,
+    .record-date-cell i {
+        font-size: 13px;
+        color: #a0a09d;
+    }
+
+.record-diagnosis-cell {
+    color: #111210;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.record-empty-row {
+    padding: 60px;
+    text-align: center;
+    color: #a0a09d;
+}
+
+    .record-empty-row i {
+        font-size: 36px;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+.record-view-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #F0F9F5;
+    border: 1px solid #C5E8D9;
+    border-radius: 7px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #0F6E52;
+    cursor: pointer;
+    font-family: inherit;
+}
+.record-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 300;
+}
+
+.record-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 16px;
+    z-index: 400;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.record-modal-header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+
+.record-modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111210;
+}
+
+.record-modal-close {
+    background: #f7f7f5;
+    border: none;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #6b6b68;
+}
+
+.record-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.record-modal-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.record-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.record-btn-cancel {
+    flex: 1;
+    padding: 11px 0;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #6b6b68;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.record-btn-submit {
+    flex: 2;
+    padding: 11px 0;
+    background: #1A9E75;
+    border: none;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+    .record-btn-submit:disabled,
+    .record-btn-cancel:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+
+.record-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .record-field label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #111210;
+    }
+
+    .record-field .required {
+        color: #E24B4A;
+    }
+
+.record-field-error {
+    font-size: 11.5px;
+    color: #B03030;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.record-input {
+    width: 100%;
+    padding: 9px 12px;
+    box-sizing: border-box;
+    background: #f7f7f5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #111210;
+    outline: none;
+    font-family: inherit;
+}
+
+    .record-input[data-error="true"] {
+        border-color: #E24B4A;
+    }
+
+    .record-input.textarea {
+        resize: vertical;
+        min-height: 70px;
+        line-height: 1.5;
+    }

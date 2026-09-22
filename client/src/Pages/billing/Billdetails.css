@@ -1,0 +1,248 @@
+.bill-details-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+}
+
+.bill-back-link {
+    background: none;
+    border: none;
+    color: #4a6fa5;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0 0 16px;
+}
+
+    .bill-back-link:hover {
+        text-decoration: underline;
+    }
+
+.bill-details-loading,
+.bill-details-error {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.bill-details-error {
+    color: #c0392b;
+    background: #fdecea;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.bill-details-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    margin-bottom: 16px;
+}
+
+.bill-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+    .bill-details-header h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        color: #1f2937;
+    }
+
+.bill-status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-paid {
+    background: #e1f5ee;
+    color: #0f6e52;
+}
+
+.status-unpaid {
+    background: #fef7e6;
+    color: #875000;
+}
+
+.status-overdue {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.bill-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+    margin-bottom: 8px;
+}
+
+.bill-details-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+}
+
+.field-value {
+    font-size: 1rem;
+    color: #1f2937;
+}
+
+.bill-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+    .bill-items-table th {
+        text-align: left;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #9ca3af;
+        padding: 8px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .bill-items-table td {
+        padding: 10px 0;
+        font-size: 0.92rem;
+        color: #1f2937;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+        .bill-items-table td.num,
+        .bill-items-table th.num {
+            text-align: right;
+        }
+
+.bill-total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid #1f2937;
+}
+
+    .bill-total-line .label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .bill-total-line .value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+.bill-details-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.bill-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+    .bill-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+.bill-btn-paid {
+    background: #1a7f37;
+    color: #fff;
+}
+
+.bill-btn-overdue {
+    background: #b7791f;
+    color: #fff;
+}
+
+.bill-btn-unpaid {
+    background: #6b7280;
+    color: #fff;
+}
+
+.bill-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.bill-btn:not(:disabled):hover {
+    opacity: 0.9;
+}
+
+.bill-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.bill-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 360px;
+    width: 90%;
+}
+
+    .bill-modal h2 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+        color: #1f2937;
+    }
+
+    .bill-modal p {
+        margin: 0 0 16px;
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+    .bill-modal select {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        font-family: inherit;
+    }
+
+.bill-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+@media (max-width: 520px) {
+    .bill-details-grid {
+        grid-template-columns: 1fr;
+    }
+}

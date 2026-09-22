@@ -1,0 +1,189 @@
+.appt-details-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+}
+
+.appt-back-link {
+    background: none;
+    border: none;
+    color: #4a6fa5;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0 0 16px;
+}
+
+    .appt-back-link:hover {
+        text-decoration: underline;
+    }
+
+.appt-details-loading,
+.appt-details-error {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.appt-details-error {
+    color: #c0392b;
+    background: #fdecea;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.appt-details-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.appt-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+    .appt-details-header h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        color: #1f2937;
+    }
+
+.appt-status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-confirmed {
+    background: #e3f8e9;
+    color: #1a7f37;
+}
+
+.status-cancelled {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.status-pending {
+    background: #fff4e0;
+    color: #b7791f;
+}
+
+.appt-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+    margin-bottom: 28px;
+}
+
+.appt-details-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.appt-details-field-full {
+    grid-column: 1 / -1;
+}
+
+.field-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+}
+
+.field-value {
+    font-size: 1rem;
+    color: #1f2937;
+}
+
+.appt-details-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.appt-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+    .appt-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+.appt-btn-confirm {
+    background: #1a7f37;
+    color: #fff;
+}
+
+.appt-btn-cancel {
+    background: #c0392b;
+    color: #fff;
+}
+
+.appt-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.appt-btn:not(:disabled):hover {
+    opacity: 0.9;
+}
+
+.appt-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.appt-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 360px;
+    width: 90%;
+}
+
+    .appt-modal h2 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+        color: #1f2937;
+    }
+
+    .appt-modal p {
+        margin: 0 0 20px;
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+.appt-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+@media (max-width: 520px) {
+    .appt-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
