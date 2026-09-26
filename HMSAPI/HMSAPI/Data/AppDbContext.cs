@@ -18,6 +18,7 @@ namespace HMSAPI.Data
         public DbSet<BillItem> BillItems { get; set; }
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<LabResult> LabResults { get; set; }
+        public DbSet<DoctorAvailability> DoctorAvailability { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AppointmentStatus>().HasData(
