@@ -25,3 +25,10 @@ export const updateAppointmentStatus = async (id, appointmentStatusId) => {
 export const deleteAppointment = async (id) => {
     await axiosInstance.delete(`/appointment/${id}`);
 };
+
+export const getAvailableSlots = async (doctorId, date) => {
+    const res = await axiosInstance.get('/appointment/slots', {
+        params: { doctorId, date },
+    });
+    return res.data;
+};

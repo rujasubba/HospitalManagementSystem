@@ -1,11 +1,10 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllDoctors } from '../../api/doctorService';
 import { getAllPatients } from '../../api/patientService';
 import { getAllAppointmentTypes } from '../../api/appointmentTypeService';
 import { getAllAppointmentStatuses } from '../../api/appointmentStatusService';
-import { getAllAppointments, createAppointment } from '../../api/appointmemntService';
+import { getAllAppointments, createAppointment, getAvailableSlots } from '../../api/appointmemntService';
 import './Appointments.css';
 
 function formatDate(d) {
@@ -37,9 +36,44 @@ function BookModal({ onClose, onBook, doctors, patients, appointmentTypes }) {
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
 
+    const [slots, setSlots] = useState([]);
+    const [slotsLoading, setSlotsLoading] = useState(false);
+    const [slotsError, setSlotsError] = useState('');
+    const slotRequestId = useRef(0); 
+
+    const today = new Date().toLocaleDateString('en-CA');
+
+    async function loadSlots(doctorId, date) {
+        const requestId = ++slotRequestId.current;
+        setSlots([]);
+        setSlotsError('');
+
+        if (!doctorId || !date) {
+            setSlotsLoading(false);
+            return;
+        }
+
+        setSlotsLoading(true);
+        try {
+            const data = await getAvailableSlots(doctorId, date);
+            if (requestId === slotRequestId.current) setSlots(data);
+        } catch (err) {
+            if (requestId === slotRequestId.current) setSlotsError('Could not load available slots.');
+        } finally {
+            if (requestId === slotRequestId.current) setSlotsLoading(false);
+        }
+    }
+
     function set(field, value) {
-        setForm(f => ({ ...f, [field]: value }));
+        const resetsSlot = field === 'doctorId' || field === 'date';
+
+        setForm(f => ({ ...f, [field]: value, ...(resetsSlot ? { time: '' } : {}) }));
         setErrors(e => ({ ...e, [field]: '' }));
+
+        if (resetsSlot) {
+            const next = { ...form, [field]: value };
+            loadSlots(next.doctorId, next.date);
+        }
     }
 
     const selectedDoctor = doctors.find(d => String(d.id) === String(form.doctorId));
@@ -50,7 +84,7 @@ function BookModal({ onClose, onBook, doctors, patients, appointmentTypes }) {
         if (!form.doctorId) e.doctorId = 'Please select a doctor';
         if (!form.appointmentTypeId) e.appointmentTypeId = 'Please select appointment type';
         if (!form.date) e.date = 'Please select a date';
-        if (!form.time) e.time = 'Please select a time';
+        if (!form.time) e.time = 'Please select a time slot';
         return e;
     }
 
@@ -71,9 +105,42 @@ function BookModal({ onClose, onBook, doctors, patients, appointmentTypes }) {
             onClose();
         } catch (err) {
             setErrors({ submit: err?.response?.data || 'Failed to book appointment. Please try again.' });
+            setForm(f => ({ ...f, time: '' }));
+            loadSlots(form.doctorId, form.date);
         } finally {
             setSubmitting(false);
         }
+    }
+
+    function renderSlots() {
+        if (!form.doctorId || !form.date) {
+            return <div className="appt-slots-hint">Select a doctor and date to see available slots.</div>;
+        }
+        if (slotsLoading) {
+            return <div className="appt-slots-hint">Loading slots...</div>;
+        }
+        if (slotsError) {
+            return <div className="appt-slots-hint">{slotsError}</div>;
+        }
+        if (slots.every(s => !s.available)) {
+            return <div className="appt-slots-hint">No slots available on this date. Try another day.</div>;
+        }
+        return (
+            <div className="appt-slots">
+                {slots.map(s => (
+                    <button
+                        type="button"
+                        key={s.time}
+                        disabled={!s.available}
+                        data-selected={form.time === s.time}
+                        onClick={() => set('time', s.time)}
+                        className="appt-slot-btn"
+                    >
+                        {s.time}
+                    </button>
+                ))}
+            </div>
+        );
     }
 
     return (
@@ -132,40 +199,33 @@ function BookModal({ onClose, onBook, doctors, patients, appointmentTypes }) {
                         </Field>
                     </div>
 
-                    <Field label="Appointment Type" required error={errors.appointmentTypeId}>
-                        <select
-                            value={form.appointmentTypeId}
-                            onChange={e => set('appointmentTypeId', e.target.value)}
-                            className="appt-input"
-                            data-error={!!errors.appointmentTypeId}
-                        >
-                            <option value="">Select type</option>
-                            {appointmentTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-                        </select>
-                    </Field>
-
                     <div className="appt-modal-grid-2">
+                        <Field label="Appointment Type" required error={errors.appointmentTypeId}>
+                            <select
+                                value={form.appointmentTypeId}
+                                onChange={e => set('appointmentTypeId', e.target.value)}
+                                className="appt-input"
+                                data-error={!!errors.appointmentTypeId}
+                            >
+                                <option value="">Select type</option>
+                                {appointmentTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                            </select>
+                        </Field>
                         <Field label="Date" required error={errors.date}>
                             <input
                                 type="date"
                                 value={form.date}
-                                min={new Date().toISOString().split('T')[0]}
+                                min={today}
                                 onChange={e => set('date', e.target.value)}
                                 className="appt-input"
                                 data-error={!!errors.date}
                             />
                         </Field>
-                        <Field label="Time" required error={errors.time}>
-                            <input
-                                type="time"
-                                value={form.time}
-                                step="60"
-                                onChange={e => set('time', e.target.value)}
-                                className="appt-input"
-                                data-error={!!errors.time}
-                            />
-                        </Field>
                     </div>
+
+                    <Field label="Time Slot" required error={errors.time}>
+                        {renderSlots()}
+                    </Field>
 
                     <Field label="Notes (optional)">
                         <textarea
@@ -196,6 +256,7 @@ function BookModal({ onClose, onBook, doctors, patients, appointmentTypes }) {
         </>
     );
 }
+
 export default function Appointments() {
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);

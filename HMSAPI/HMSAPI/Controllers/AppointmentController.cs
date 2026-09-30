@@ -6,11 +6,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HMSAPI.Controllers
 {
+
+
     [ApiController]
     [Route("api/[controller]")]
     public class AppointmentController(AppDbContext context) : ControllerBase
     {
         private const int DefaultPendingStatusId = 3;
+
+        private static readonly TimeSpan WorkDayStart = TimeSpan.FromHours(9);
+        private static readonly TimeSpan WorkDayEnd = TimeSpan.FromHours(17);
+        private static readonly TimeSpan SlotLength = TimeSpan.FromMinutes(30);
+
+        private static List<string> AllSlots()
+        {
+            var slots = new List<string>();
+            for (var t = WorkDayStart; t + SlotLength <= WorkDayEnd; t += SlotLength)
+                slots.Add(t.ToString(@"hh\:mm"));
+            return slots;
+        }
+
+        private static bool IsInPast(DateTime day, string slot, DateTime now)
+        {
+            var slotStart = day.Date + TimeSpan.Parse(slot);
+            return slotStart <= now;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -24,6 +44,33 @@ namespace HMSAPI.Controllers
                 .ToListAsync();
 
             return Ok(appointments);
+        }
+
+        [HttpGet("slots")]
+        public async Task<IActionResult> GetSlots([FromQuery] int doctorId, [FromQuery] DateTime date)
+        {
+            var doctorExists = await context.Doctors.AnyAsync(d => d.Id == doctorId);
+            if (!doctorExists) return NotFound("Doctor not found.");
+
+            var day = date.Date;
+            var nextDay = day.AddDays(1);
+
+            var booked = await context.Appointments
+                .Where(a => a.DoctorId == doctorId
+                         && a.AppointmentDate >= day
+                         && a.AppointmentDate < nextDay
+                         && a.AppointmentStatus.Name != "Cancelled")
+                .Select(a => a.TimeSlot)
+                .ToListAsync();
+
+            var now = DateTime.Now;
+            var slots = AllSlots().Select(time => new AppointmentSlotDto
+            {
+                Time = time,
+                Available = !booked.Contains(time) && !IsInPast(day, time, now),
+            });
+
+            return Ok(slots);
         }
 
         [HttpGet("{id}")]
@@ -44,13 +91,29 @@ namespace HMSAPI.Controllers
         public async Task<IActionResult> Create(CreateAppointmentDto dto)
         {
             var patientExists = await context.Patients.AnyAsync(p => p.Id == dto.PatientId);
-            if (!patientExists) return BadRequest("No Patient found");
+            if (!patientExists) return BadRequest("Selected patient does not exist.");
 
             var doctorExists = await context.Doctors.AnyAsync(d => d.Id == dto.DoctorId);
-            if (!doctorExists) return BadRequest("No doctor found");
+            if (!doctorExists) return BadRequest("Selected doctor does not exist.");
 
             var typeExists = await context.AppointmentType.AnyAsync(t => t.Id == dto.AppointmentTypeId);
             if (!typeExists) return BadRequest("Selected appointment type does not exist.");
+
+            if (!AllSlots().Contains(dto.TimeSlot))
+                return BadRequest("Selected time is not a valid appointment slot.");
+
+            var day = dto.AppointmentDate.Date;
+            if (IsInPast(day, dto.TimeSlot, DateTime.Now))
+                return BadRequest("Selected slot is in the past.");
+
+            var nextDay = day.AddDays(1);
+            var slotTaken = await context.Appointments.AnyAsync(a =>
+                a.DoctorId == dto.DoctorId
+                && a.AppointmentDate >= day
+                && a.AppointmentDate < nextDay
+                && a.TimeSlot == dto.TimeSlot
+                && a.AppointmentStatus.Name != "Cancelled");
+            if (slotTaken) return BadRequest("This time slot is already booked for the selected doctor.");
 
             var appointment = new Appointment
             {
@@ -59,6 +122,7 @@ namespace HMSAPI.Controllers
                 AppointmentTypeId = dto.AppointmentTypeId,
                 AppointmentDate = dto.AppointmentDate,
                 TimeSlot = dto.TimeSlot,
+                //Notes = dto.Notes,
                 AppointmentStatusId = 3,
                 CreatedAt = DateTime.UtcNow,
             };
