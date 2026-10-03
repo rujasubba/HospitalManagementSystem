@@ -6,18 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HMSAPI.Controllers
 {
-
-
     [ApiController]
     [Route("api/[controller]")]
     public class AppointmentController(AppDbContext context) : ControllerBase
     {
         private const int DefaultPendingStatusId = 3;
-
         private static readonly TimeSpan WorkDayStart = TimeSpan.FromHours(9);
         private static readonly TimeSpan WorkDayEnd = TimeSpan.FromHours(17);
         private static readonly TimeSpan SlotLength = TimeSpan.FromMinutes(30);
-
         private static List<string> AllSlots()
         {
             var slots = new List<string>();
@@ -60,6 +56,35 @@ namespace HMSAPI.Controllers
                          && a.AppointmentDate >= day
                          && a.AppointmentDate < nextDay
                          && a.AppointmentStatus.Name != "Cancelled")
+                .Select(a => a.TimeSlot)
+                .ToListAsync();
+
+            var now = DateTime.Now;
+            var slots = AllSlots().Select(time => new AppointmentSlotDto
+            {
+                Time = time,
+                Available = !booked.Contains(time) && !IsInPast(day, time, now),
+            });
+
+            return Ok(slots);
+        }
+
+        [HttpGet("{id}/slots")]
+        public async Task<IActionResult> GetSlotsForReschedule(int id, [FromQuery] DateTime date)
+        {
+            var appointment = await context.Appointments.FindAsync(id);
+            if (appointment == null) return NotFound("Appointment not found.");
+
+            var day = date.Date;
+            var nextDay = day.AddDays(1);
+            var isSameDayAsCurrent = appointment.AppointmentDate.Date == day;
+
+            var booked = await context.Appointments
+                .Where(a => a.DoctorId == appointment.DoctorId
+                         && a.AppointmentDate >= day
+                         && a.AppointmentDate < nextDay
+                         && a.AppointmentStatus.Name != "Cancelled"
+                         && a.Id != id)
                 .Select(a => a.TimeSlot)
                 .ToListAsync();
 
@@ -138,6 +163,45 @@ namespace HMSAPI.Controllers
                 .FirstOrDefaultAsync(a => a.Id == appointment.Id);
 
             return CreatedAtAction(nameof(GetById), new { id = appointment.Id }, created);
+        }
+
+        [HttpPut("{id}/reschedule")]
+        public async Task<IActionResult> Reschedule(int id, RescheduleAppointmentDto dto)
+        {
+            var appointment = await context.Appointments.FindAsync(id);
+            if (appointment == null) return NotFound();
+
+            if (!AllSlots().Contains(dto.TimeSlot))
+                return BadRequest("Selected time is not a valid appointment slot.");
+
+            var day = dto.AppointmentDate.Date;
+            if (IsInPast(day, dto.TimeSlot, DateTime.Now))
+                return BadRequest("Selected slot is in the past.");
+
+            var nextDay = day.AddDays(1);
+            var slotTaken = await context.Appointments.AnyAsync(a =>
+                a.DoctorId == appointment.DoctorId
+                && a.AppointmentDate >= day
+                && a.AppointmentDate < nextDay
+                && a.TimeSlot == dto.TimeSlot
+                && a.AppointmentStatus.Name != "Cancelled"
+                && a.Id != id);
+            if (slotTaken) return BadRequest("This time slot is already booked for the selected doctor.");
+
+            appointment.AppointmentDate = dto.AppointmentDate;
+            appointment.TimeSlot = dto.TimeSlot;
+            appointment.AppointmentStatusId = DefaultPendingStatusId;
+
+            await context.SaveChangesAsync();
+
+            var updated = await context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .Include(a => a.AppointmentType)
+                .Include(a => a.AppointmentStatus)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            return Ok(updated);
         }
 
         [HttpPut("{id}/status")]

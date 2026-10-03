@@ -32,3 +32,18 @@ export const getAvailableSlots = async (doctorId, date) => {
     });
     return res.data;
 };
+
+export const rescheduleAppointment = async (id, { appointmentDate, timeSlot }) => {
+    const res = await axiosInstance.put(`/appointment/${id}/reschedule`, {
+        appointmentDate,
+        timeSlot,
+    });
+    return res.data;
+};
+
+export const getSlotsForReschedule = async (appointmentId, date) => {
+    const res = await axiosInstance.get(`/appointment/${appointmentId}/slots`, {
+        params: { date },
+    });
+    return res.data;
+};

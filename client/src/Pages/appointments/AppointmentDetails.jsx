@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     getAppointmentById,
     updateAppointmentStatus,
+    rescheduleAppointment,
+    getSlotsForReschedule,
 } from "../../api/appointmemntService";
 import { getAllAppointmentStatuses } from "../../api/appointmentStatusService";
 import "./AppointmentDetails.css";
@@ -21,6 +23,8 @@ export default function AppointmentDetails() {
     const [actionLoading, setActionLoading] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
+    const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+
     const fetchAppointment = async () => {
         setLoading(true);
         setError(null);
@@ -29,7 +33,7 @@ export default function AppointmentDetails() {
             setAppointment(res.data);
         } catch (err) {
             console.error("Failed to load appointment:", err);
-            setError("It may have been removed.");
+            setError("Couldn't load this appointment. It may have been removed.");
         } finally {
             setLoading(false);
         }
@@ -112,6 +116,7 @@ export default function AppointmentDetails() {
 
     const canConfirm = statusName !== STATUS_CONFIRMED && statusName !== STATUS_CANCELLED;
     const canCancel = statusName !== STATUS_CANCELLED;
+    const canReschedule = statusName !== STATUS_CANCELLED;
 
     return (
         <div className="appt-details-page">
@@ -189,6 +194,14 @@ export default function AppointmentDetails() {
                     </button>
 
                     <button
+                        className="appt-btn appt-btn-reschedule"
+                        onClick={() => setShowRescheduleModal(true)}
+                        disabled={!canReschedule || actionLoading}
+                    >
+                        Reschedule
+                    </button>
+
+                    <button
                         className="appt-btn appt-btn-cancel"
                         onClick={() => setShowCancelConfirm(true)}
                         disabled={!canCancel || actionLoading}
@@ -202,7 +215,7 @@ export default function AppointmentDetails() {
                 <div className="appt-modal-overlay" onClick={() => setShowCancelConfirm(false)}>
                     <div className="appt-modal" onClick={(e) => e.stopPropagation()}>
                         <h2>Cancel this appointment?</h2>
-                        <p>This can't be undone.</p>
+                        <p>This will mark the appointment as cancelled. This can't be undone from here.</p>
                         <div className="appt-modal-actions">
                             <button
                                 className="appt-btn appt-btn-secondary"
@@ -222,6 +235,131 @@ export default function AppointmentDetails() {
                     </div>
                 </div>
             )}
+
+            {showRescheduleModal && (
+                <RescheduleModal
+                    appointmentId={id}
+                    currentDate={appointment.appointmentDate}
+                    currentTime={appointment.timeSlot}
+                    onClose={() => setShowRescheduleModal(false)}
+                    onRescheduled={async () => {
+                        setShowRescheduleModal(false);
+                        await fetchAppointment();
+                    }}
+                />
+            )}
+        </div>
+    );
+}
+
+function RescheduleModal({ appointmentId, currentDate, currentTime, onClose, onRescheduled }) {
+    const today = new Date().toLocaleDateString("en-CA"); // local date, not UTC
+    const [date, setDate] = useState(new Date(currentDate).toISOString().split("T")[0]);
+    const [time, setTime] = useState("");
+    const [slots, setSlots] = useState([]);
+    const [slotsLoading, setSlotsLoading] = useState(false);
+    const [slotsError, setSlotsError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState("");
+    const requestId = useRef(0);
+
+    const loadSlots = async (d) => {
+        const thisRequest = ++requestId.current;
+        setSlots([]);
+        setSlotsError("");
+        setSlotsLoading(true);
+        try {
+            const data = await getSlotsForReschedule(appointmentId, d);
+            if (thisRequest === requestId.current) setSlots(data);
+        } catch (err) {
+            if (thisRequest === requestId.current) setSlotsError("Could not load available slots.");
+        } finally {
+            if (thisRequest === requestId.current) setSlotsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadSlots(date);
+    }, []);
+
+    const handleDateChange = (newDate) => {
+        setDate(newDate);
+        setTime("");
+        loadSlots(newDate);
+    };
+
+    const submit = async () => {
+        if (!time) {
+            setError("Please select a time slot.");
+            return;
+        }
+        setSubmitting(true);
+        setError("");
+        try {
+            await rescheduleAppointment(appointmentId, { appointmentDate: date, timeSlot: time });
+            await onRescheduled();
+        } catch (err) {
+            setError(err?.response?.data || "Failed to reschedule. Please try again.");
+            setTime("");
+            loadSlots(date);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="appt-modal-overlay" onClick={onClose}>
+            <div className="appt-modal appt-reschedule-modal" onClick={(e) => e.stopPropagation()}>
+                <h2>Reschedule Appointment</h2>
+                <p>Currently {new Date(currentDate).toLocaleDateString()} at {currentTime}. This will reset the status to Pending.</p>
+
+                {error && <div className="appt-details-error">{error}</div>}
+
+                <div className="appt-reschedule-field">
+                    <label>New Date</label>
+                    <input
+                        type="date"
+                        value={date}
+                        min={today}
+                        onChange={(e) => handleDateChange(e.target.value)}
+                        className="appt-reschedule-input"
+                    />
+                </div>
+
+                <div className="appt-reschedule-field">
+                    <label>New Time Slot</label>
+                    {slotsLoading && <div className="appt-slots-hint">Loading slots...</div>}
+                    {!slotsLoading && slotsError && <div className="appt-slots-hint">{slotsError}</div>}
+                    {!slotsLoading && !slotsError && slots.every((s) => !s.available) && (
+                        <div className="appt-slots-hint">No slots available on this date. Try another day.</div>
+                    )}
+                    {!slotsLoading && !slotsError && slots.some((s) => s.available) && (
+                        <div className="appt-slots">
+                            {slots.map((s) => (
+                                <button
+                                    type="button"
+                                    key={s.time}
+                                    disabled={!s.available}
+                                    data-selected={time === s.time}
+                                    onClick={() => setTime(s.time)}
+                                    className="appt-slot-btn"
+                                >
+                                    {s.time}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="appt-modal-actions">
+                    <button className="appt-btn appt-btn-secondary" onClick={onClose} disabled={submitting}>
+                        Cancel
+                    </button>
+                    <button className="appt-btn appt-btn-reschedule" onClick={submit} disabled={submitting}>
+                        {submitting ? "Saving…" : "Confirm Reschedule"}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }
