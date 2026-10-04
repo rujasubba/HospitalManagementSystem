@@ -105,6 +105,8 @@ export default function DoctorProfile() {
 
             <div style={{
                 maxWidth: 560,
+                width: '100%',
+                margin: '0 auto',
                 background: '#fff', borderRadius: 16, overflow: 'hidden',
                 border: '1px solid rgba(0,0,0,0.08)',
                 boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
@@ -178,6 +180,8 @@ export default function DoctorProfile() {
 
             <div style={{
                 maxWidth: 560,
+                width: '100%',
+                margin: '0 auto',
                 background: '#fff', borderRadius: 16, overflow: 'hidden',
                 border: '1px solid rgba(0,0,0,0.08)',
                 boxShadow: '0 4px 16px rgba(0,0,0,0.04)',

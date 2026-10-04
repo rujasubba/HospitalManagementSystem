@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPatientById } from '../../api/patientService';
+import { getMedicalRecordsByPatientId } from '../../api/Medicalrecordservice ';
 
 function makeInitials(fullName) {
     if (!fullName) return '?';
@@ -80,6 +81,7 @@ function InfoRow({ icon, label, value }) {
         </div>
     );
 }
+
 function ScheduledAppointments({ appointments, onView }) {
     return (
         <Card>
@@ -136,17 +138,66 @@ function ScheduledAppointments({ appointments, onView }) {
         </Card>
     );
 }
+
+function MedicalHistory({ records, onView }) {
+    return (
+        <Card>
+            <SectionTitle>Medical History</SectionTitle>
+
+            {records.length === 0 && (
+                <div style={{ padding: 20, fontSize: 12.5, color: 'var(--text-tertiary)' }}>
+                    No medical records yet.
+                </div>
+            )}
+
+            {records.length > 0 && (
+                <div style={{ padding: '8px 0' }}>
+                    {records.map((r) => (
+                        <div
+                            key={r.id}
+                            onClick={() => onView(r.id)}
+                            style={{
+                                display: 'flex', alignItems: 'flex-start', gap: 12,
+                                padding: '12px 20px', cursor: 'pointer',
+                                borderBottom: '1px solid var(--border)',
+                            }}
+                        >
+                            <div style={{
+                                width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+                                background: 'var(--bg-secondary)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', marginTop: 2,
+                            }}>
+                                <i className="ti ti-file-description" style={{ fontSize: 16, color: 'var(--text-secondary)' }} />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>
+                                    {r.diagnosis}
+                                </div>
+                                <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                                    {r.doctorName} · {formatApptDate(r.recordDate)}
+                                </div>
+                                {r.prescription && (
+                                    <div style={{
+                                        fontSize: 12, color: 'var(--text-secondary)', marginTop: 4,
+                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                    }}>
+                                        {r.prescription}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </Card>
+    );
+}
+
 const TREATMENTS = [
     { name: 'Angiography', date: '22 October 2024', doctor: 'Dr. Prashant', done: true, active: false },
     { name: 'Beta-Blockers', date: '14 December 2024', doctor: 'Dr. Prashant', done: true, active: false },
     { name: 'ACE inhibitors', date: '24 December 2024', doctor: 'Dr. Prashant', done: true, active: false },
     { name: 'Open Heart Surgery', date: '28 December 2024', doctor: 'Dr. Prashant', done: false, active: true },
-];
-
-const CONDITIONS = [
-    { icon: 'activity', label: 'Hypertension', desc: 'High blood pressure requires regular monitoring' },
-    { icon: 'wind', label: 'Asthma', desc: 'Airway inflammation and narrowing.' },
-    { icon: 'kidney', label: 'Chronic Kidney Disease', desc: 'Loss of kidney function over time if not treated.' },
 ];
 
 const btnPrimary = {
@@ -162,7 +213,8 @@ export default function PatientProfile() {
     const [patient, setPatient] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
- 
+
+    const [medicalRecords, setMedicalRecords] = useState([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -179,6 +231,20 @@ export default function PatientProfile() {
             }
         }
         load();
+        return () => { cancelled = true; };
+    }, [id]);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadRecords() {
+            try {
+                const data = await getMedicalRecordsByPatientId(id);
+                if (!cancelled) setMedicalRecords(data);
+            } catch (err) {
+                console.error('Failed to load medical records:', err);
+            }
+        }
+        loadRecords();
         return () => { cancelled = true; };
     }, [id]);
 
@@ -266,18 +332,10 @@ export default function PatientProfile() {
                         </div>
                     </Card>
 
-                    <Card>
-                        <SectionTitle>Medical History</SectionTitle>
-                        <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-                            {CONDITIONS.map(({ icon, label, desc }) => (
-                                <div key={label} style={{ border: '1px solid var(--border)', borderRadius: 10, padding: 14, background: 'var(--bg)' }}>
-                                    <i className={`ti ti-${icon}`} style={{ fontSize: 20, color: 'var(--text-secondary)', marginBottom: 8, display: 'block' }} />
-                                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{label}</div>
-                                    <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{desc}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </Card>
+                    <MedicalHistory
+                        records={medicalRecords}
+                        onView={(recordId) => navigate(`/medical-records/${recordId}`)}
+                    />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
