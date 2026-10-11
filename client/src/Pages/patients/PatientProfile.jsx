@@ -192,6 +192,59 @@ function MedicalHistory({ records, onView }) {
         </Card>
     );
 }
+function LabResults({ lab, onView }) {
+    return (
+        <Card>
+            <SectionTitle>Lab Results</SectionTitle>
+
+            {lab.length === 0 && (
+                <div style={{ padding: 20, fontSize: 12.5, color: 'var(--text-tertiary)' }}>
+                    No results yet.
+                </div>
+            )}
+
+            {lab.length > 0 && (
+                <div style={{ padding: '8px 0' }}>
+                    {lab.map((r) => (
+                        <div
+                            key={r.id}
+                            onClick={() => onView(r.id)}
+                            style={{
+                                display: 'flex', alignItems: 'flex-start', gap: 12,
+                                padding: '12px 20px', cursor: 'pointer',
+                                borderBottom: '1px solid var(--border)',
+                            }}
+                        >
+                            <div style={{
+                                width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+                                background: 'var(--bg-secondary)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', marginTop: 2,
+                            }}>
+                                <i className="ti ti-file-description" style={{ fontSize: 16, color: 'var(--text-secondary)' }} />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>
+                                    {r.diagnosis}
+                                </div>
+                                <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                                    {r.doctorName} · {formatApptDate(r.recordDate)}
+                                </div>
+                                {r.prescription && (
+                                    <div style={{
+                                        fontSize: 12, color: 'var(--text-secondary)', marginTop: 4,
+                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                    }}>
+                                        {r.prescription}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </Card>
+    );
+}
 
 const TREATMENTS = [
     { name: 'Angiography', date: '22 October 2024', doctor: 'Dr. Prashant', done: true, active: false },
