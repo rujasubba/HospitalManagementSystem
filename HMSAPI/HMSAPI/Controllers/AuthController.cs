@@ -16,7 +16,6 @@ namespace HMSAPI.Controllers
         ITokenService tokenService,
         AppDbContext context) : ControllerBase
     {
-        // Same message for "no such user" and "wrong password" so the API doesn't reveal which emails exist.
         private const string InvalidCredentials = "Invalid email or password.";
 
         private static readonly string[] ValidGenders = { "Male", "Female", "Other" };
@@ -36,9 +35,6 @@ namespace HMSAPI.Controllers
             return new AuthResponseDto { Token = token, ExpiresAt = expiresAt, User = info };
         }
 
-        // POST api/auth/register
-        // Public. Creates the patient record AND the login that points at it, in one transaction.
-        // The role is always Patient - the client can't choose one.
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
@@ -70,7 +66,7 @@ namespace HMSAPI.Controllers
                 DateOfBirth = dob,
                 Phone = dto.Phone?.Trim() ?? string.Empty,
                 Email = email,
-                Status = "Outpatient", // not "Admitted" (the model's default) - they've only registered
+                Status = "Outpatient",
             };
             context.Patients.Add(patient);
             await context.SaveChangesAsync();
@@ -86,7 +82,7 @@ namespace HMSAPI.Controllers
             var result = await userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
             {
-                await tx.RollbackAsync(); // don't leave a patient record behind for a failed sign-up
+                await tx.RollbackAsync();
                 return BadRequest(new
                 {
                     message = "Registration failed.",
@@ -100,7 +96,6 @@ namespace HMSAPI.Controllers
             return Ok(await BuildAuthResponse(user));
         }
 
-        // POST api/auth/login
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
@@ -118,7 +113,7 @@ namespace HMSAPI.Controllers
 
             if (!await userManager.CheckPasswordAsync(user, dto.Password))
             {
-                await userManager.AccessFailedAsync(user); // counts toward lockout
+                await userManager.AccessFailedAsync(user);
                 return Unauthorized(new { message = InvalidCredentials });
             }
 
@@ -126,8 +121,6 @@ namespace HMSAPI.Controllers
             return Ok(await BuildAuthResponse(user));
         }
 
-        // POST api/auth/staff  (Admin only)
-        // Staff don't self-register: an Admin creates their login. No patient record is created.
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("staff")]
         public async Task<IActionResult> CreateStaff(CreateStaffDto dto)
@@ -158,7 +151,6 @@ namespace HMSAPI.Controllers
             return Ok(await ToUserInfo(user));
         }
 
-        // GET api/auth/users  (Admin only)
         [Authorize(Roles = Roles.Admin)]
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
@@ -170,7 +162,6 @@ namespace HMSAPI.Controllers
             return Ok(result);
         }
 
-        // PUT api/auth/users/{id}/role  (Admin only) - replaces the user's role
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("users/{id}/role")]
         public async Task<IActionResult> UpdateRole(string id, UpdateUserRoleDto dto)
@@ -183,7 +174,6 @@ namespace HMSAPI.Controllers
 
             var currentRoles = await userManager.GetRolesAsync(user);
 
-            // Never let the system end up with no Admin.
             if (currentRoles.Contains(Roles.Admin) && dto.Role != Roles.Admin)
             {
                 var admins = await userManager.GetUsersInRoleAsync(Roles.Admin);

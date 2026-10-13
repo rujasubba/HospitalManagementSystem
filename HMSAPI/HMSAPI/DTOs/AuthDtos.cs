@@ -12,6 +12,30 @@ namespace HMSAPI.DTOs
 
         [Required]
         public string Password { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime? DateOfBirth { get; set; }
+
+        [Required]
+        public string Gender { get; set; } = string.Empty; 
+
+        [StringLength(30)]
+        public string? Phone { get; set; }
+    }
+
+    public class CreateStaffDto
+    {
+        [Required, StringLength(100)]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+
+        [Required]
+        public string Role { get; set; } = string.Empty; // Admin, Doctor, Receptionist
     }
 
     public class LoginDto

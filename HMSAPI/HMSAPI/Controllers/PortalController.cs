@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HMSAPI.Controllers
 {
-    // Everything a logged-in PATIENT is allowed to do. Staff use the other controllers.
-    // Each action works out "who am I" from the login, never from anything the client sends.
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = Roles.Patient)]
@@ -19,8 +17,6 @@ namespace HMSAPI.Controllers
         private const int MaxDaysAhead = 90;
         private const int MaxUpcomingAppointments = 5;
 
-        // Which Patients row belongs to the logged-in account (read from the database, not the token,
-        // so it can't go stale if the record changes).
         private async Task<int?> GetMyPatientIdAsync()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -55,7 +51,6 @@ namespace HMSAPI.Controllers
             .Include(a => a.AppointmentType)
             .Include(a => a.AppointmentStatus);
 
-        // GET api/portal/doctors
         [HttpGet("doctors")]
         public async Task<IActionResult> GetDoctors()
         {
@@ -72,7 +67,6 @@ namespace HMSAPI.Controllers
             }));
         }
 
-        // GET api/portal/appointment-types
         [HttpGet("appointment-types")]
         public async Task<IActionResult> GetAppointmentTypes()
         {
@@ -80,7 +74,6 @@ namespace HMSAPI.Controllers
             return Ok(types.Select(t => new AppointmentTypeOptionDto { Id = t.Id, Name = t.Name }));
         }
 
-        // GET api/portal/slots?doctorId=1&date=2026-10-12
         [HttpGet("slots")]
         public async Task<IActionResult> GetSlots([FromQuery] int doctorId, [FromQuery] DateTime date)
         {
@@ -91,7 +84,6 @@ namespace HMSAPI.Controllers
             return Ok(await slots.GetSlotsAsync(doctorId, date));
         }
 
-        // GET api/portal/appointments  - only MY appointments
         [HttpGet("appointments")]
         public async Task<IActionResult> GetMyAppointments()
         {
@@ -107,7 +99,6 @@ namespace HMSAPI.Controllers
             return Ok(appointments.Select(ToSummary));
         }
 
-        // POST api/portal/appointments  - book for myself, status starts as Pending
         [HttpPost("appointments")]
         public async Task<IActionResult> Book(PortalBookingDto dto)
         {
@@ -131,13 +122,11 @@ namespace HMSAPI.Controllers
             if (day > today.AddDays(MaxDaysAhead))
                 return BadRequest($"You can book up to {MaxDaysAhead} days ahead.");
 
-            // The slot may have been taken since the patient loaded the list
             if (await slots.IsTakenAsync(dto.DoctorId, day, dto.TimeSlot))
                 return BadRequest("That time slot has just been booked. Please pick another.");
 
             var nextDay = day.AddDays(1);
 
-            // Can't be in two places at once
             var clash = await context.Appointments.AnyAsync(a =>
                 a.PatientId == patientId
                 && a.AppointmentDate >= day
@@ -146,7 +135,6 @@ namespace HMSAPI.Controllers
                 && a.AppointmentStatus.Name != "Cancelled");
             if (clash) return BadRequest("You already have an appointment at that time.");
 
-            // Stops one account from hoarding slots
             var upcoming = await context.Appointments.CountAsync(a =>
                 a.PatientId == patientId
                 && a.AppointmentDate >= today
@@ -176,8 +164,6 @@ namespace HMSAPI.Controllers
             return Ok(ToSummary(created));
         }
 
-        // GET api/portal/appointments/5/slots?date=2026-10-12
-        // Slots for rescheduling MY appointment: its own current slot shows as free.
         [HttpGet("appointments/{id}/slots")]
         public async Task<IActionResult> GetSlotsForReschedule(int id, [FromQuery] DateTime date)
         {
@@ -191,7 +177,6 @@ namespace HMSAPI.Controllers
             return Ok(await slots.GetSlotsAsync(appointment.DoctorId, date, excludeAppointmentId: id));
         }
 
-        // PUT api/portal/appointments/5/reschedule  - same doctor, new date/time, status back to Pending
         [HttpPut("appointments/{id}/reschedule")]
         public async Task<IActionResult> Reschedule(int id, RescheduleAppointmentDto dto)
         {
@@ -244,14 +229,12 @@ namespace HMSAPI.Controllers
             return Ok(ToSummary(appointment));
         }
 
-        // PUT api/portal/appointments/5/cancel  - only if it's MINE
         [HttpPut("appointments/{id}/cancel")]
         public async Task<IActionResult> Cancel(int id)
         {
             var patientId = await GetMyPatientIdAsync();
             if (patientId == null) return StatusCode(403, "Your account isn't linked to a patient record.");
 
-            // Someone else's appointment gets the same 404 as one that doesn't exist
             var appointment = await AppointmentsWithDetails()
                 .FirstOrDefaultAsync(a => a.Id == id && a.PatientId == patientId);
             if (appointment == null) return NotFound();
@@ -273,4 +256,3 @@ namespace HMSAPI.Controllers
         }
     }
 }
-

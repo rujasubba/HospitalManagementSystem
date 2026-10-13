@@ -58,6 +58,12 @@ namespace HMSAPI.Data
             //    u.HasIndex(x => x.PatientId).IsUnique().HasFilter("[PatientId] IS NOT NULL");
             //});
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUser>(u =>
+            {
+                u.HasOne(x => x.Patient).WithMany().HasForeignKey(x => x.PatientId).OnDelete(DeleteBehavior.SetNull);
+                u.HasIndex(x => x.PatientId).IsUnique().HasFilter("[PatientId] IS NOT NULL");
+            });
         }
 
         }
