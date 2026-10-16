@@ -1,0 +1,239 @@
+/* ===== Auth.css (Login + Register) ===== */
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: var(--bg, #f0efea);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* ---------- Brand ---------- */
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.auth-brand-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #1A9E75;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.auth-brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111210;
+    line-height: 1.2;
+}
+
+.auth-brand-sub {
+    font-size: 12px;
+    color: #6b6b68;
+}
+
+.auth-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111210;
+    margin: 0 0 4px;
+}
+
+.auth-subtitle {
+    font-size: 13px;
+    color: #6b6b68;
+    margin: 0 0 22px;
+}
+
+/* ---------- Form ---------- */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .auth-field label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #111210;
+    }
+
+.auth-input {
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    background: #f7f7f5;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #111210;
+    outline: none;
+    font-family: inherit;
+}
+
+    .auth-input:focus {
+        border-color: #1A9E75;
+    }
+
+    .auth-input[data-error="true"] {
+        border-color: #E24B4A;
+    }
+
+.auth-password-wrap {
+    position: relative;
+}
+
+    .auth-password-wrap .auth-input {
+        padding-right: 40px;
+    }
+
+.auth-password-toggle {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #a0a09d;
+}
+
+.auth-hint {
+    font-size: 11.5px;
+    color: #a0a09d;
+}
+
+.auth-field-error {
+    font-size: 11.5px;
+    color: #B03030;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .auth-field-error i {
+        font-size: 13px;
+    }
+
+.auth-error-banner {
+    background: #FEF0F0;
+    border: 1px solid #FCCACA;
+    color: #B03030;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+    .auth-error-banner i {
+        font-size: 16px;
+        margin-top: 1px;
+    }
+
+.auth-submit {
+    margin-top: 4px;
+    width: 100%;
+    padding: 11px 0;
+    background: #1A9E75;
+    border: none;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+    .auth-submit:disabled {
+        opacity: 0.7;
+        cursor: default;
+    }
+
+    .auth-submit i {
+        font-size: 16px;
+    }
+
+.auth-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #6b6b68;
+}
+
+    .auth-footer a {
+        color: #0F6E52;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+@keyframes auth-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.auth-spinner {
+    animation: auth-spin 1s linear infinite;
+}
+
+/* ---------- Register additions ---------- */
+.auth-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.auth-optional {
+    font-weight: 400;
+    color: #a0a09d;
+}
+
+select.auth-input {
+    appearance: auto;
+}
